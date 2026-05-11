@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1.7
 
-ARG BASE_IMAGE=nvidia/cuda:12.6.0-devel-ubuntu22.04
+ARG BASE_IMAGE=nvidia/cuda:12.8.0-devel-ubuntu22.04
 FROM ${BASE_IMAGE} AS base
 
 ARG BASE_IMAGE
 ARG PYTHON_VERSION=3.10.20
-ARG UV_EXTRA=cuda126
+ARG UV_EXTRA=cuda128
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PATH=/root/.local/bin:${PATH} \
@@ -19,15 +19,18 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 WORKDIR /workspace
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    bash \
-    build-essential \
-    ca-certificates \
-    curl \
-    git \
-    git-lfs \
-    pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+RUN set -eux; \
+    apt-get update -o Acquire::Retries=5; \
+    apt-get install -y --fix-missing --no-install-recommends \
+        -o Acquire::Retries=5 \
+        bash \
+        build-essential \
+        ca-certificates \
+        curl \
+        git \
+        git-lfs \
+        pkg-config; \
+    rm -rf /var/lib/apt/lists/*
 
 RUN git lfs install --system
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh

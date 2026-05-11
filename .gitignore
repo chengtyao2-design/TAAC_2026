@@ -10,4 +10,5 @@ site/
 .cache/
 .ruff_cache/
 .tmp/
+.docker_tmp/
 .coverage.*
